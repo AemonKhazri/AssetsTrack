@@ -1,6 +1,7 @@
 ﻿
 using ATA.CoreBusiness;
 using ATA.UseCases.PluginInterfaces;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace ATA.Plugins.EFCore
@@ -8,9 +9,18 @@ namespace ATA.Plugins.EFCore
    
         public class AssetRepository : IAssetRepository
         {
-            public Task<IEnumerable<Asset>> GetAssetsByName(string name)
+        private readonly ATAContext db;
+
+        public AssetRepository(ATAContext db)
+        {
+            this.db = db;
+        }
+        public async Task<IEnumerable<Asset>> GetAssetsByName(string name)
             {
-                throw new NotImplementedException();
+
+            return await this.db.Assets.Where(x => x.AssetName.Contains(name) ||
+                            string.IsNullOrWhiteSpace(name)).ToListAsync();
+
             }
         }
 

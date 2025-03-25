@@ -1,4 +1,10 @@
 ﻿@page "/counter"
+@using ATA.UseCases.Interfaces
+
+
+@inject IViewAssetsByNameUseCase ViewAssetsByNameUse  ;
+
+
 @rendermode InteractiveServer
 
 <PageTitle>Counter</PageTitle>
@@ -11,6 +17,14 @@
 
 @code {
     private int currentCount = 0;
+
+
+    protected override async  Task OnInitializedAsync()
+    
+    {
+
+       var assets = await ViewAssetsByNameUse.ExecuteAsync("ook");  
+    }
 
     private void IncrementCount()
     {

@@ -4,6 +4,10 @@ using Microsoft.EntityFrameworkCore;
 using ATA.WebApp.Components;
 using ATA.WebApp.Components.Account;
 using ATA.WebApp.Data;
+using ATA.Plugins.EFCore;
+using ATA.UseCases.Interfaces;
+using ATA.UseCases;
+using ATA.UseCases.PluginInterfaces;
 
 namespace ATA.WebApp;
 
@@ -41,8 +45,22 @@ public class Program
 
         builder.Services.AddSingleton<IEmailSender<ApplicationUser>, IdentityNoOpEmailSender>();
 
-        var app = builder.Build();
+        builder.Services.AddDbContext<ATAContext>(options => {
 
+            options.UseInMemoryDatabase("ATA");
+        });
+        //DI Repositories
+        builder.Services.AddTransient<IAssetRepository, AssetRepository>();
+       //DI use cases
+        builder.Services.AddTransient<IViewAssetsByNameUseCase, ViewAssetsByNameUseCase>();
+
+        var app = builder.Build();
+        var scope = app.Services.CreateScope();
+        var ataContext = scope.ServiceProvider.GetRequiredService<ATAContext>();
+
+        ataContext.Database.EnsureDeleted();
+        ataContext.Database.EnsureCreated();
+       
         // Configure the HTTP request pipeline.
         if (app.Environment.IsDevelopment())
         {
