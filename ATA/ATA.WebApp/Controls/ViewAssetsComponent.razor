@@ -1,0 +1,29 @@
+﻿@using ATA.CoreBusiness
+@using ATA.UseCases.Interfaces
+@inject IViewAssetsByNameUseCase ViewAssetsByNameUseCase
+
+<div class="input-group mb-3">
+    <input type="text" 
+    class="form-control form-control-lg"
+    placeholder="type asset name here to search"
+    @bind="assetNameToSearch"
+    />
+    <button type="button"
+    class="input-group-text btn-success"    
+    @onclick="@(async()=>{await  ViewAssets();})"
+    >View</button>
+</div>
+
+@code {
+    private string? assetNameToSearch;
+    
+    [Parameter]
+    public EventCallback<List<Asset>> OnSearchAssets{ get; set; }
+
+    private async Task ViewAssets()
+    {
+        var  assets  = (await ViewAssetsByNameUseCase.ExecuteAsync(assetNameToSearch??string.Empty))?.ToList();
+        await OnSearchAssets.InvokeAsync(assets);
+    }
+
+}

@@ -18,7 +18,7 @@ namespace ATA.Plugins.EFCore
         public async Task<IEnumerable<Asset>> GetAssetsByName(string name)
             {
 
-            return await this.db.Assets.Where(x => x.AssetName.Contains(name) ||
+            return await this.db.Assets.Where(x => x.AssetName.Contains(name, StringComparison.OrdinalIgnoreCase) ||
                             string.IsNullOrWhiteSpace(name)).ToListAsync();
 
             }
